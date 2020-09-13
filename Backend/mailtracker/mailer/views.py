@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 
-from .models import *
+from .models import ProfessorModel
 
 from email import encoders
 from email.message import Message
@@ -125,6 +125,7 @@ def send_message(service, user_id, message):
         print('An error occurred: %s' % e)
         return None
 
+
 @login_required(login_url='/accounts/login/')
 def profile(request):
     return render(request, 'mailer/index.html', {"user" : request.user})
@@ -132,8 +133,11 @@ def profile(request):
 
 @login_required(login_url='/accounts/login/')
 def database(request):
-    all_profs = ProfessorModel.objects.all().order_by("name")
-    context = { 'professor_list' : all_profs, "user" : request.user }
+    all_profs = ProfessorModel.objects.all().filter(userperson=request.user).order_by("name")
+    print(all_profs)
+    if all_profs is None:
+        render(request, 'mailer/pages/database/database.html', {"user" : request.user})
+    context = { "professors" : all_profs, "user" : request.user }
     return render(request, 'mailer/pages/database/database.html', context)
 
 @login_required(login_url='/accounts/login/')
@@ -146,20 +150,36 @@ def sendmail(service, recv_email, subject, mes):
 
 
 @login_required(login_url='/accounts/login/')
-def addprof(request):
-    data = dict(request.GET)
-    if request.method == 'GET':
-        newprof = ProfessorModel(name=data["name"],
-            emailid=data["email"],
-            country=data["country"],
-            interests=data["interests"],
-            university=data["university"],
-            userperson=request.user,
-            email_body=data["email_body"],
-            reminder_mail = data["reminder_mail"])
-        newprof.save()
-    context = { 'professor_list' : data }
-    return render(request, 'pages/forms/first_email.html', context)
+def firstmail(request):
+    data = request.GET
+    if data:
+        if request.method == 'GET':
+            newprof = ProfessorModel(name=data["name"],
+                emailid=data["email"],
+                country=data["country"],
+                interests=data["interests"],
+                university=data["univ"],
+                userperson=request.user,
+                email_body=data["emailbody"],
+                reminder_mail = data["reminderbody"])
+            newprof.save()
+    return render(request, 'mailer/pages/forms/first_email.html', {"user" : request.user})
+
+# @login_required(login_url='/accounts/login/')
+# def addprof(request):
+#     data = dict(request.GET)
+#     if request.method == 'GET':
+#         newprof = ProfessorModel(name=data["name"],
+#             emailid=data["email"],
+#             country=data["country"],
+#             interests=data["interests"],
+#             university=data["university"],
+#             userperson=request.user,
+#             email_body=data["email_body"],
+#             reminder_mail = data["reminder_mail"])
+#         newprof.save()
+#     context = { 'professor_list' : data, "user" : request.user }
+#     return render(request, 'mailer/pages/forms/first_email.html', context)
 
 
 @login_required(login_url='/accounts/login/')
@@ -167,11 +187,11 @@ def deleteprof(request, prof_id):
     ProfessorModel.objects.filter(pk=prof_id).delete()
 
 
-@login_required(login_url='/accounts/login/')
-def get_profs(request):
-    all_profs = ProfessorModel.objects.all().order_by("name")
-    context = { 'professor_list' : all_profs}
-    return render(request, 'pages/database/database.html', context)
+# @login_required(login_url='/accounts/login/')
+# def get_profs(request):
+#     all_profs = ProfessorModel.objects.all().order_by("name")
+#     context = { 'professor_list' : all_profs}
+#     return render(request, 'pages/database/database.html', context)
 
 
 @login_required(login_url='/accounts/login/')

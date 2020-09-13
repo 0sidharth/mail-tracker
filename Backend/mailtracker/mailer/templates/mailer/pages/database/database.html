@@ -62,25 +62,25 @@
         </div>
         <ul class="nav">
           <li class="nav-item">
-            <a class="nav-link" href="../index.html">
+            <a class="nav-link" href="{% url 'mailer:profile' %}">
               <i class="icon-box menu-icon"></i>
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="../database/database.html">
+            <a class="nav-link" href="{% url 'mailer:database' %}">
               <i class="icon-help menu-icon"></i>
               <span class="menu-title">Database</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="../forms/first_email.html">
+            <a class="nav-link" href="{% url 'mailer:firstmail' %}">
               <i class="icon-file menu-icon"></i>
               <span class="menu-title">First Email</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="../login/login.html">
+            <a class="nav-link" href="{% url 'mailer:profile' %}">
               <i class="icon-head menu-icon"></i>
               <span class="menu-title">User Login</span>
               <i class="menu-arrow"></i>
@@ -118,9 +118,6 @@
                             Instituition
                           </th>
                           <th>
-                            Department
-                          </th>
-                          <th>
                             Interests
                           </th>
                           <th>
@@ -132,22 +129,19 @@
                         </tr>
                       </thead>
                       <tbody>
-                        {% for professor in professor_list %}
+                        {% for professor in professors %}
                         <tr class="table-info">
                           <td contenteditable="true">
-                           {{ professor.index }}
+                           {{ professor.id }}
                           </td>
                           <td contenteditable="true">
                            {{ professor.name }}
                           </td>
                           <td contenteditable="true">
-                           {{ professor.email }}
+                           {{ professor.emailid }}
                           </td>
                           <td contenteditable="true">
                            {{ professor.university }}
-                          </td>
-                          <td contenteditable="true">
-                           {{ professor.department }}
                           </td>
                           <td contenteditable="true">
                            {{ professor.interests }}

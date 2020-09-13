@@ -125,6 +125,14 @@ def send_message(service, user_id, message):
         print('An error occurred: %s' % e)
         return None
 
+@login_required(login_url='/accounts/login/')
+def profile(request):
+    return render(request, 'mailer/index.html', {"user" : request.user})
+
+
+@login_required(login_url='/accounts/login/')
+def database(request):
+    return render(request, 'mailer/pages/database/database.html', {"user" : request.user})
 
 @login_required(login_url='/accounts/login/')
 def sendmail(service, recv_email, subject, mes):
@@ -142,7 +150,6 @@ def addprof(request):
         newprof = ProfessorModel(name=data["name"],
             emailid=data["email"],
             country=data["country"],
-            country=data["city"],
             interests=data["interests"],
             university=data["university"],
             userperson=request.user,
@@ -152,9 +159,11 @@ def addprof(request):
     context = { 'professor_list' : data }
     return render(request, 'pages/forms/first_email.html', context)
 
+
 @login_required(login_url='/accounts/login/')
 def deleteprof(request, prof_id):
     ProfessorModel.objects.filter(pk=prof_id).delete()
+
 
 @login_required(login_url='/accounts/login/')
 def get_profs(request):
@@ -162,9 +171,11 @@ def get_profs(request):
     context = { 'professor_list' : all_profs}
     return render(request, 'pages/database/database.html', context)
 
+
 @login_required(login_url='/accounts/login/')
 def update_seen_reply_status(request):
     pass
+
 
 @login_required(login_url='/accounts/login/')
 def update_send_mail(request):

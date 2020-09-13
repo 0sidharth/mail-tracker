@@ -18,7 +18,7 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 
 urlpatterns = [
-	path('', TemplateView.as_view(template_name="mailer/index.html")),
+	path('', TemplateView.as_view(template_name="mailer/pages/login/login.html")),
     path('admin/', admin.site.urls),
     path('mailer/', include('mailer.urls')),
     path('accounts/', include('allauth.urls')),

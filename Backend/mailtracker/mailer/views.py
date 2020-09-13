@@ -132,7 +132,9 @@ def profile(request):
 
 @login_required(login_url='/accounts/login/')
 def database(request):
-    return render(request, 'mailer/pages/database/database.html', {"user" : request.user})
+    all_profs = ProfessorModel.objects.all().order_by("name")
+    context = { 'professor_list' : all_profs, "user" : request.user }
+    return render(request, 'mailer/pages/database/database.html', context)
 
 @login_required(login_url='/accounts/login/')
 def sendmail(service, recv_email, subject, mes):

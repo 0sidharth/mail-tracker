@@ -15,4 +15,12 @@ Dashboard Condensed
 ![Image of Dashboard_2](https://github.com/0sidharth/mail-tracker/blob/master/dashboard_condensed.png)
 
 Form to fill up details of Professors
+![Image of login](https://github.com/0sidharth/mail-tracker/blob/master/login.jpg)
+
+Database with details of Professors
+![Image of Database](https://github.com/0sidharth/mail-tracker/blob/master/db.jpg)
+
+Form to fill up details of Professors
 ![Image of Form](https://github.com/0sidharth/mail-tracker/blob/master/first_email.png)
+
+

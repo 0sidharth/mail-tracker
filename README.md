@@ -5,3 +5,14 @@
 <h1 class="code-line" data-line-start=6 data-line-end=7 ><a id="Problem_statement_6"></a>Problem statement</h1>
 <p class="has-line-data" data-line-start="7" data-line-end="9">Apping ,as we call it, is a tedious process of mailing HR managers or professors to secure internships or jobs. It requires a lot of patience and perseverance to mail them everyday, keep track of replies, giving them reminders, etc.<br>
 So the main aim is to somehow automate this task where the app keeps track of everything with just one click.</p>
+
+<h1 class="code-line" data-line-start=6 data-line-end=7 ><a id="Images"></a>Screenshots and Examples</h1>
+
+Dashboard
+![Image of Dashboard](https://github.com/0sidharth/mail-tracker/blob/master/dashboard_full.png)
+
+Dashboard Condensed
+![Image of Dashboard_2](https://github.com/0sidharth/mail-tracker/blob/master/dashboard_condensed.png)
+
+Form to fill up details of Professors
+![Image of Form](https://github.com/0sidharth/mail-tracker/blob/master/first_email.png)

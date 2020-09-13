@@ -7,6 +7,7 @@
     <h1>My Google Login Project</h1>
     {% if user.is_authenticated %}
       <p>Welcome, {{ user }} !</p> 
+      <a class='btn btn-primary' href="{% url 'mailer:sendmail' %}">Upload</a>
     {% else %}
       <h1>My Google Login Project</h1>
       <a href="{% provider_login_url 'google' %}">Login with Google</a>

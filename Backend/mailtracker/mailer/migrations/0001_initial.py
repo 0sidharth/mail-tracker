@@ -26,9 +26,13 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=254)),
-                ('emailid', models.EmailField(max_length=254)),
+                ('email', models.EmailField(max_length=254)),
+                ('interests', models.EmailField(max_length=254)),
                 ('country', models.CharField(max_length=254)),
+                ('city', models.CharField(max_length=254)),
                 ('university', models.CharField(max_length=254)),
+                ('email_body', models.TextField),
+                ('reminder_mail', models.TextField),
             ],
         ),
     ]

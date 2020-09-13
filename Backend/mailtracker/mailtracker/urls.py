@@ -16,11 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from . import views
 
 urlpatterns = [
-	path('', TemplateView.as_view(template_name="mailer/index.html")),
+	path('', TemplateView.as_view(template_name="mailer/pages/login/login.html")),
     path('admin/', admin.site.urls),
+    path('mailer/', include('mailer.urls')),
     path('accounts/', include('allauth.urls')),
-    path('tracking/<int:unique_id>/', views.PixelView.as_view(), name="pixel_view")
 ]

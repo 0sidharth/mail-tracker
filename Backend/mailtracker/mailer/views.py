@@ -3,13 +3,14 @@ from __future__ import print_function
 import pickle
 import os.path
 import base64
+import json
 
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 
-from .models import ProfessorModel
+from .models import ProfessorModel, EmailModel
 
 from email import encoders
 from email.message import Message
@@ -140,10 +141,11 @@ def database(request):
     context = { "professors" : all_profs, "user" : request.user }
     return render(request, 'mailer/pages/database/database.html', context)
 
+
 @login_required(login_url='/accounts/login/')
-def sendmail(service, recv_email, subject, mes):
-    verified_gmail_data = service.users().getProfile(userId="me")
-    m = create_message(verified_gmail_data["emailAddress"], recv_email, subject, message)
+def sendmail(request, service, recv_email, subject, mes):
+    verified_gmail_data = service.users().getProfile(userId="me").execute()
+    m = create_message(verified_gmail_data["emailAddress"], recv_email, subject, mes)
     ### Take Email of receiver as input !
     send_m = send_message(service, "me", m)
     return send_m
@@ -161,25 +163,10 @@ def firstmail(request):
                 university=data["univ"],
                 userperson=request.user,
                 email_body=data["emailbody"],
-                reminder_mail = data["reminderbody"])
+                reminder_mail = data["reminderbody"],
+                replied=False)
             newprof.save()
     return render(request, 'mailer/pages/forms/first_email.html', {"user" : request.user})
-
-# @login_required(login_url='/accounts/login/')
-# def addprof(request):
-#     data = dict(request.GET)
-#     if request.method == 'GET':
-#         newprof = ProfessorModel(name=data["name"],
-#             emailid=data["email"],
-#             country=data["country"],
-#             interests=data["interests"],
-#             university=data["university"],
-#             userperson=request.user,
-#             email_body=data["email_body"],
-#             reminder_mail = data["reminder_mail"])
-#         newprof.save()
-#     context = { 'professor_list' : data, "user" : request.user }
-#     return render(request, 'mailer/pages/forms/first_email.html', context)
 
 
 @login_required(login_url='/accounts/login/')
@@ -187,20 +174,9 @@ def deleteprof(request, prof_id):
     ProfessorModel.objects.filter(pk=prof_id).delete()
 
 
-# @login_required(login_url='/accounts/login/')
-# def get_profs(request):
-#     all_profs = ProfessorModel.objects.all().order_by("name")
-#     context = { 'professor_list' : all_profs}
-#     return render(request, 'pages/database/database.html', context)
-
-
 @login_required(login_url='/accounts/login/')
 def update_seen_reply_status(request):
-    pass
-
-
-@login_required(login_url='/accounts/login/')
-def update_send_mail(request):
+    creds = None
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
@@ -220,13 +196,66 @@ def update_send_mail(request):
     verified_gmail_data = service.users().getProfile(userId="me")
     all_profs = ProfessorModel.objects.all()
     for prof in all_profs:
-        latest_email = prof.emailmodel_set.latest('date_created')
-        if latest_email is None:
-            sendmail(service, prof.emailid, prof.email_subject, prof.email_body)
-            continue
-        if latest_email.seen == True:
-            continue #Seen zoned lol
-        else:
-            if latest_email.since() > 3: ## more than 3 days then mail
-                sendmail(service, prof.emailid, prof.reminder_subject, prof.reminder_mail)
+        all_messages = service.users().messages().list(userId="me", 
+            q="from:{}".format(prof.emailid)).execute()
+        prof.colour_status = 0
+        prof.save()
+        if "messages" in all_messages:
+            prof.replied = True
+            prof.colour_status = 2
+            prof.save()
+    return HttpResponseRedirect(reverse('mailer:database'))
 
+
+@login_required(login_url='/accounts/login/')
+def update_send_mail(request):
+    creds = None
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=8081)
+        # Save the credentials for the next run
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+
+    service = build('gmail', 'v1', credentials=creds)
+    verified_gmail_data = service.users().getProfile(userId="me").execute()
+    all_profs = ProfessorModel.objects.all()
+    for prof in all_profs:
+        latest_email = EmailModel.objects.filter(professor=prof).order_by("date_created")
+        if latest_email:
+            latest_email = latest_email[0]
+        if not latest_email:
+            sendmail(request, service, prof.emailid, prof.email_subject, prof.email_body)
+            new_mail = EmailModel(sender=verified_gmail_data["emailAddress"],
+                receiver=prof.emailid,
+                email_text=prof.email_body,
+                professor = prof,
+                userperson = request.user,
+                seen = False,
+                replied = False)
+            new_mail.save()
+            continue
+        else:
+            print(latest_email)
+            if latest_email.seen == True:
+                continue #Seen zoned lol
+            else:
+                if latest_email.since() > 3: ## more than 3 days then mail
+                    sendmail(request, service, prof.emailid, prof.reminder_subject, prof.reminder_mail)
+                    new_mail = EmailModel(sender=verified_gmail_data["emailAddress"],
+                        receiver=prof.emailid,
+                        email_text=prof.reminder_mail,
+                        professor = prof,
+                        userperson = request.user,
+                        seen = False,
+                        replied = False)
+                    new_mail.save()
+    return HttpResponseRedirect(reverse('mailer:database'))

@@ -13,6 +13,8 @@ class ProfessorModel(models.Model):
 	email_body = models.TextField(default = "This blog is under Construction !")
 	reminder_mail = models.TextField(default = "This blog is under Construction !")
 	reminder_subject = models.TextField(default = "This blog is under Construction !")
+	replied = models.BooleanField()
+	colour_status = models.IntegerField(default = 0, null=True, blank=True)
 
 class EmailModel(models.Model):
 	sender = models.EmailField(max_length=254)

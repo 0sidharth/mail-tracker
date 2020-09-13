@@ -7,4 +7,6 @@ urlpatterns = [
 	path('', views.profile, name='profile'),
 	path('database/', views.database, name='database'),
 	path('addprof/', views.firstmail, name='firstmail'),
+	path('update_seen_reply_status/', views.update_seen_reply_status, name='update_seen_reply_status'),
+	path('update_send_mail/', views.update_send_mail, name='update_send_mail'),
 ]

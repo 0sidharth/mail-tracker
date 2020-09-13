@@ -96,6 +96,15 @@
               <div class="card">
                 <div class="card-body">
                   <h2 class="card-title">Database</h2>
+                  <div class = "row" >
+                    <div class = "col-7"> </div>
+                    <div class = "col-3">
+                      <button onclick="window.location.href='/mailer/update_seen_reply_status'" type="button" id = "update_db_btn" class="btn btn-info mb-3" style = "margin-right: 0em; border: none;">Update database</button>
+                    </div>
+                    <div class = "col-2">
+                      <button onclick="window.location.href='/mailer/update_send_mail'" type="button" id = "send_mails_btn" class="btn btn-danger mb-3 ">Send mails</button>
+                    </div>
+                  </div>
                   <!-- p class="card-description" >
                     Add class <code>.table-{color}</code>
                   </p -->
@@ -130,31 +139,37 @@
                       </thead>
                       <tbody>
                         {% for professor in professors %}
-                        <tr class="table-info">
-                          <td contenteditable="true">
-                           {{ professor.id }}
-                          </td>
-                          <td contenteditable="true">
-                           {{ professor.name }}
-                          </td>
-                          <td contenteditable="true">
-                           {{ professor.emailid }}
-                          </td>
-                          <td contenteditable="true">
-                           {{ professor.university }}
-                          </td>
-                          <td contenteditable="true">
-                           {{ professor.interests }}
-                          </td>
-                          <td contenteditable="true">
-                           {{ professor.country }}
-                          </td>
-                          <td contenteditable="true">
-                            <span class="table-remove">
-                                <button type="button" class="btn btn-danger btn-rounded btn-sm my-0">Remove</button>
-                            </span>
-                          </td>
-                        </tr>
+                          {% if professor.colour_status == 0 %}
+                            <tr class="table-info">
+                          {% elif professor.colour_status == 2 %}
+                            <tr class="table-success">
+                          {% else %}
+                            <tr class="table-warning">
+                          {% endif %}
+                              <td contenteditable="true">
+                               {{ professor.id }}
+                              </td>
+                              <td contenteditable="true">
+                               {{ professor.name }}
+                              </td>
+                              <td contenteditable="true">
+                               {{ professor.emailid }}
+                              </td>
+                              <td contenteditable="true">
+                               {{ professor.university }}
+                              </td>
+                              <td contenteditable="true">
+                               {{ professor.interests }}
+                              </td>
+                              <td contenteditable="true">
+                               {{ professor.country }}
+                              </td>
+                              <td contenteditable="true">
+                                <span class="table-remove">
+                                    <button type="button" class="btn btn-danger btn-rounded btn-sm my-0">Remove</button>
+                                </span>
+                              </td>
+                            </tr>
                         {% endfor %}
                       </tbody>
                     </table>
